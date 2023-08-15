@@ -41,14 +41,14 @@ class RemoteDataHourlyWeather extends RemoteDataSource with PositionClass {
         final json = HourlyWeather.fromJson(body); */
         return right(body);
       }
-    } on DioException catch (e) {
+    } on DioException {
       final file = await rootBundle.loadString('assets/weather_hourly.json');
       var myData = json.decode(file);
       final body = HourlyWeather.fromJson(myData);
       /* final body = response.data;
         final json = HourlyWeather.fromJson(body); */
       return right(body);
-    } on Exception catch (e) {
+    } on Exception {
       throw left(Failures.server());
     }
   }
@@ -75,7 +75,7 @@ class RemoteDataWeatherNow extends RemoteDataSource with PositionClass {
       }
     } on DioException catch (e) {
       return left(Failures.unknown(description: e.toString()));
-    } on Exception catch (e) {
+    } on Exception {
       throw left(Failures.server());
     }
   }
@@ -86,25 +86,28 @@ class AuthDataSource {
   Stream<User?> get authUsers => _auth.authStateChanges();
   Future<void> get signOut => FirebaseAuth.instance.signOut();
 
-  Future signIn(String email, String password, GlobalKey<FormState> key) async {
+  Future<Either<Failures, Unit>> signIn(
+      String email, String password, GlobalKey<FormState> key) async {
     final isValid = key.currentState!.validate();
-    if (!isValid) return;
+    if (!isValid) return left(Failures.unknown(description: 'Не валидно'));
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
+      return right(unit);
     } on FirebaseAuthException catch (e) {
-      Exception(e);
+      return left(Failures.unknown(description: e.message.toString()));
     }
   }
 
-  Future signUp(String email, String password, GlobalKey<FormState> key) async {
+  Future<Either<Failures, Unit>> signUp(
+      String email, String password, GlobalKey<FormState> key) async {
     final isValid = key.currentState!.validate();
-    if (!isValid) return;
+    if (!isValid) return left(Failures.unknown(description: 'Не валидно'));
     try {
       await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
+      return right(unit);
     } on FirebaseAuthException catch (e) {
-      print(e);
-      /* ErrorMessage.showSnackBar(e.message); */
+      return left(Failures.unknown(description: e.toString()));
     }
   }
 }
@@ -123,12 +126,11 @@ mixin PositionClass {
         throw Exception('Error');
       } */
       Position newPosition = await Geolocator.getCurrentPosition()
-          .timeout(new Duration(seconds: 5));
+          .timeout(const Duration(seconds: 5));
 
       return newPosition;
     } catch (e) {
-      print('Error: ${e.toString()}');
-      throw e;
+      rethrow;
     }
   }
 }

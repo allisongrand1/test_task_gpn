@@ -8,7 +8,7 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [
         BlocProvider<AuthBloc>(
-            create: (BuildContext context) => AuthBloc(AuthDataSource())),
+            create: (BuildContext context) => AuthBloc(RepositoryAuth())),
         BlocProvider<HomeBloc>(
             create: (context) => HomeBloc()..add(GetWeatherEvent())),
       ],

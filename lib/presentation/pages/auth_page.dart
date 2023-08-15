@@ -1,5 +1,4 @@
 import 'package:test_task_gpn/common/dictionary/dictionary.dart';
-import 'package:test_task_gpn/presentation/widgets/signup_form.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -17,24 +16,37 @@ class _AuthPageState extends State<AuthPage> {
           return StreamBuilder(
               stream: state.streamUsers,
               builder: (context, snapshot) {
-                /* if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else  */
                 if (snapshot.hasData) {
-                  return HomePage();
+                  return const HomePage();
                 } else if (snapshot.hasError) {
-                  Center(
+                  return Center(
                     child: Text(snapshot.error.toString()),
                   );
                 }
-                return AuthPage();
+                return const LogInForm();
               });
         } else if (state is InitialSignUpAuthState) {
-          return SignUpForm();
+          return const SignUpForm();
+        } else if (state is FailState) {
+          return CustomDialogContainer(
+            title: 'Ошибка',
+            descriptions: [
+              (state.failure.join(
+                (request) =>
+                    'Отсутствует подключени к интернету, \nработа приложение продолжиться',
+                (server) => 'Ошибка сервера',
+                (cache) => '',
+                (unknown) => '${unknown.description}',
+              ))
+            ],
+            textButton: 'Продолжить',
+            onPressed: () {
+              BlocProvider.of<AuthBloc>(context).add(InitialSignInAuthEvent());
+              Navigator.of(context).pop();
+            },
+          );
         }
-        return Center(child: CircularProgressIndicator());
+        return const Center(child: CircularProgressIndicator());
       }),
     );
   }

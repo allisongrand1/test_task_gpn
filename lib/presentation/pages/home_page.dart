@@ -1,5 +1,3 @@
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:test_task_gpn/common/dictionary/dictionary.dart';
@@ -32,28 +30,42 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Icon(
-                        Icons.location_on,
-                        color: Colors.white,
+                      Row(
+                        children: [
+                          const Icon(
+                            Icons.location_on,
+                            color: Colors.white,
+                          ),
+                          Text(
+                            state.nowWeather.name,
+                            style: b2medium,
+                          ),
+                        ],
                       ),
-                      Text(
-                        state.nowWeather.name,
-                        style: b2medium,
-                      ),
+                      IconButton(
+                          onPressed: () {
+                            BlocProvider.of<AuthBloc>(context)
+                                .add(SignOutAuthEvent());
+                          },
+                          icon: const Icon(
+                            Icons.logout,
+                            color: Colors.white,
+                          ))
                     ],
                   ),
                   Center(
                     child: Container(
                       decoration: BoxDecoration(
                           gradient: RadialGradient(
-                        center: Alignment(0, 0),
+                        center: const Alignment(0, 0),
                         radius: 0.4,
                         colors: <Color>[
-                          Color(0xFFBD87FF).withOpacity(0.5),
+                          const Color(0xFFBD87FF).withOpacity(0.5),
                           AppColors.blue3,
                         ],
-                        stops: <double>[0.6, 1.2],
+                        stops: const <double>[0.6, 1.2],
                       )),
                       child: _buildIconTheWeather(
                           state.nowWeather.weather.first.main),

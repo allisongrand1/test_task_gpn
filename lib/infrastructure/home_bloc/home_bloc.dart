@@ -1,5 +1,4 @@
 import 'package:test_task_gpn/common/dictionary/dictionary.dart';
-import 'package:test_task_gpn/data/repository/repository_impl.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final Repository _repositoryNowWeather = RepositoryNowWeather();
