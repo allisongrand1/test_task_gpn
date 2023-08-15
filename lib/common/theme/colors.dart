@@ -14,4 +14,5 @@ class AppColors {
 
   static const Color sun = Color(0xfffbb03b);
   static const Color storm = Color(0xff9cb8ff);
+  static const Color greyText = Color(0xff8799A5);
 }
